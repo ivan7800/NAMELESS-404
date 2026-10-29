@@ -1,0 +1,28 @@
+{
+  "name": "nameless-404",
+  "version": "0.31.0",
+  "private": true,
+  "type": "module",
+  "description": "NAMELESS 404 - terror retro de doble pantalla; TypeScript, WebGL2, Canvas 2D",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "build:offline": "node scripts/build-offline.mjs",
+    "build": "vite build",
+    "dev": "vite --host 127.0.0.1",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node scripts/test-engine.mjs",
+    "test:all": "npm run typecheck && npm run build:offline && npm run test && npm run test:premium && npm run test:input && npm run test:quality",
+    "test:premium": "npm run build:offline && node --check dist/bundle.js && node tests/premium-day1.test.mjs && node tests/stealth018.test.mjs && node tests/architecture019.test.mjs && node tests/finale020.test.mjs && node tests/visual021.test.mjs && node tests/lighting022.test.mjs && node tests/rooms024.test.mjs && node tests/copyist025.test.mjs",
+    "typecheck:three": "tsc --noEmit -p tsconfig.vite.json",
+    "test:input": "npm run build:offline && node --check dist/bundle.js && node tests/responsive026.test.mjs",
+    "test:quality": "npm run build:offline && node --check dist/bundle.js && node tests/quality027.test.mjs && node tests/visual028.test.mjs && node tests/setpieces029.test.mjs && node tests/atrium030.test.mjs && node tests/camera031.test.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.3",
+    "vite": "^7.1.0",
+    "@types/three": "^0.180.0"
+  },
+  "dependencies": {
+    "three": "^0.180.0"
+  }
+}

@@ -1,0 +1,17 @@
+import assert from 'node:assert/strict';
+import {readFileSync} from 'node:fs';
+import {MATERIAL_WIDTH,MATERIAL_HEIGHT,MATERIAL_NAMES,materialAtlasStats} from '../dist/src/premium/AnalogMaterials.js';
+import {NamelessEngine as E} from '../dist/src/engine.js';
+let n=0;const test=(label,fn)=>{fn();n++;console.log('PASS v0.28:',label)};
+test('Cinco familias de superficies propias',()=>assert.equal(MATERIAL_NAMES.length,5));
+test('Atlas definido para bitmap 128×192',()=>assert.equal(MATERIAL_WIDTH,128)&&assert.equal(MATERIAL_HEIGHT,192));
+test('Sin carga de medios protegidos externos',()=>{const s=readFileSync('src/premium/AnalogMaterials.ts','utf8');assert(!/fetch\(|https?:\/\/|\.png|\.jpg|\.nds|\.rom/.test(s));});
+test('Texturas deterministas; estado sin acceso a red',()=>{const s=readFileSync('src/premium/AnalogMaterials.ts','utf8');assert(s.includes('Math.imul'));assert(!s.includes('Math.random'));});
+test('Libro contiene proyección UV y distancia de niebla',()=>{const s=readFileSync('src/premium/BookMode.ts','utf8');assert(s.includes('analogMaterial(visualMat,state.day)'));assert(s.includes('texX'));assert(s.includes('fog*.30'));});
+test('Puertas dibujadas solo en las compuertas físicas de Kiba',()=>{const s=readFileSync('src/premium/BookMode.ts','utf8');assert(s.includes('gateDoor'));assert(s.includes('hit.x-6.5'));assert(s.includes('hit.x-7.5'));});
+test('El renderer offline incluye los materiales',()=>{const s=readFileSync('dist/bundle.js','utf8');assert(s.includes('function analogMaterial('));assert(s.includes('function castWalls('));});
+test('El renderer WebGL2 tiene materiales con manchas',()=>assert(readFileSync('src/gfx/RetroWebGL.ts','utf8').includes('float baseboard=')));
+test('Three.js recibe materiales 64×64',()=>assert(readFileSync('src/three/ThreeRenderer.ts','utf8').includes('const SZ=64;')));
+test('Mapas de siete días permanecen funcionales',()=>{for(let day=1;day<=7;day++){const s=E.initial();s.day=day;assert(E.realMap(s).length>0);assert(E.rpgMap(s).length>0);}});
+test('La campaña mantiene tres finales',()=>{const s=readFileSync('src/engine.ts','utf8');for(const token of ['d7Choice','d7','ending'])assert(s.includes(token));});
+console.log(`v0.28: ${n} verificaciones nuevas`);

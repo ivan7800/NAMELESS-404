@@ -1,0 +1,16 @@
+'use strict';
+const assert=require('node:assert/strict');
+const E=require('../.testbuild/engine.js').NamelessEngine;
+const g=E.newGame();
+assert.equal(E.VERSION,15);
+assert.equal(g.state().day,1);
+const state=E.initial();state.version=8;state.day=4;state.d4File=true;
+assert.equal(g.load(state),true,'Importar guardado v0.8');
+assert.equal(g.state().version,E.VERSION);
+assert.equal(g.state().day,4);
+assert.equal(g.state().d4File,true);
+assert.equal(g.load({...state,rx:-2}),false,'Rechazar coordenada corrupta');
+assert.equal(g.state().d4File,true,'Una carga corrupta no debe borrar el progreso');
+assert.equal(E.realMap(g.state()).length,14);
+assert.equal(E.rpgMap(g.state()).length,13);
+console.log('OK v0.9: migración de guardado v0.8, seguridad de carga y mapas del Día 4');
